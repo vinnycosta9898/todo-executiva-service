@@ -1,7 +1,8 @@
 import express from "express";
-import { register } from "../http/users/register";
-import { authenticate } from "../http/users/authenticate";
-import { getUserProfile } from "../http/users/get-user-profile";
+import { register } from "../http/controllers/users/register";
+import { authenticate } from "../http/controllers/users/authenticate";
+import { getUserProfile } from "../http/controllers/users/get-user-profile";
+import { isAuthenticated } from "../http/middlewares/is-authenticated";
 
 const router = express.Router();
 
@@ -11,9 +12,11 @@ export const corsOptions = {
 	allowedHeaders: ["Content-Type", "Authorization"],
 };
 
+// User routes 
+
 router.post("/register", register)
 router.post("/authenticate", authenticate)
-router.get("/me", getUserProfile)
+router.get("/me", isAuthenticated, getUserProfile)
 
 
 export { router };

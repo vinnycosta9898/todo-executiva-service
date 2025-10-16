@@ -1,9 +1,9 @@
 import type { Request, Response } from 'express'
 import { z } from 'zod'
+import { makeRegister } from '../../../factories/users/make-register'
+import { PasswordLengthError } from '../../../errors/password-length-error'
+import { UserAlreadyExistsError } from '../../../errors/users-already-exists-error'
 
-import { makeRegister } from '../../factories/users/make-register'
-import { PasswordLengthError } from '../../errors/password-length-error'
-import { UserAlreadyExistsError } from '../../errors/users-already-exists-error'
 
 export async function register(req: Request, res: Response) {
   const registerBodySchema = z.object({

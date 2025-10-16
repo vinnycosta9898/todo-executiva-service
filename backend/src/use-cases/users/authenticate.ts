@@ -1,7 +1,7 @@
 import type { UsersRepository } from '../../repositories/users-repository'
 
 import { compare } from 'bcryptjs'
-import { sign } from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 import { ResourceNotFoundError } from '../../errors/resource-not-found-error'
 import { PasswordLengthError } from '../../errors/password-length-error'
 import { CredentialsInvalidError } from '../../errors/credentials-invalid-error'
@@ -41,7 +41,7 @@ export class AuthenticateUseCase {
       throw new CredentialsInvalidError()
     }
 
-    const token = sign(
+    const token = jwt.sign(
       {
         name: user.name,
         email: user.email

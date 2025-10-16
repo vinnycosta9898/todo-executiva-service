@@ -1,7 +1,8 @@
 
 import type { Request, Response } from 'express'
-import { ResourceNotFoundError } from '../../errors/resource-not-found-error'
-import { makeUserGetProfile } from '../../factories/users/make-get-profile'
+import { makeUserGetProfile } from '../../../factories/users/make-get-profile'
+import { ResourceNotFoundError } from '../../../errors/resource-not-found-error'
+
 
 export async function getUserProfile(req: Request, res: Response) {
   const user_id = String(req.query.user_id)

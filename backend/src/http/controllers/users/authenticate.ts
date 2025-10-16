@@ -1,11 +1,9 @@
 
 import type { Request, Response } from 'express'
 import { z } from 'zod'
-
-import { CredentialsInvalidError } from '../../errors/credentials-invalid-error'
-import { ResourceNotFoundError } from '../../errors/resource-not-found-error'
-import { makeAuthenticate } from '../../factories/users/make-authenticate'
-
+import { makeAuthenticate } from '../../../factories/users/make-authenticate'
+import { CredentialsInvalidError } from '../../../errors/credentials-invalid-error'
+import { ResourceNotFoundError } from '../../../errors/resource-not-found-error'
 
 export async function authenticate(req: Request, res: Response) {
   const authenticateBodySchema = z.object({
