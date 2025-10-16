@@ -18,4 +18,14 @@ export class InMemoryTasksRepository implements TasksRepository {
     
     return task;
   }
+
+  async findByTitle(title: string) {
+    const task = this.items.find(item => item.title === title)
+
+    if(!task){
+      return null
+    }
+
+    return task
+  }
 }
