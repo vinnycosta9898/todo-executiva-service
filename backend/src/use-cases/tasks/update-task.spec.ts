@@ -24,7 +24,7 @@ describe("UpdateTaskUseCase", () => {
     })
   
     const { taskUpdated } = await sut.execute({
-      taskId: createdTask.id, // ✅ usa o id real
+      taskId: createdTask.id,
       status: Status.in_progress,
     })
   

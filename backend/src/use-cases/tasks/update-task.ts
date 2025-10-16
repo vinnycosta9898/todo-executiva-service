@@ -22,11 +22,6 @@ export class UpdateTaskUseCase {
       throw new TaskListEmpytError()
     }
   
-    const validStatuses = Object.values(Status)
-    if (!validStatuses.includes(status)) {
-      throw new Error(`Invalid status value: ${status}`)
-    }
-  
     const taskUpdated = await this.tasksRepository.updateTask(status, taskId)
   
     return { taskUpdated }

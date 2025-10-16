@@ -7,5 +7,4 @@ export interface TasksRepository {
     findByTitle(title: string): Promise<Task | null>
     findManyByUser(userId: string): Promise<Task[] | null>
     updateTask(status: Status, taskId: string): Promise<Task | null>;
-
 }
