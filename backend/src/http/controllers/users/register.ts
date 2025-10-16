@@ -34,6 +34,6 @@ export async function register(req: Request, res: Response) {
       res.status(409).send({ message: err.message })
     }
 
-    res.status(500).send({ message: 'Erro interno do servidor' })
+    res.status(500).send({ message: err })
   }
 }
