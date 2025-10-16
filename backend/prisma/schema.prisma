@@ -29,6 +29,8 @@ model User {
   updatedAt DateTime @default(now())
 
   task Task[]
+
+  @@map("users")
 }
 
 model Task {
@@ -38,4 +40,6 @@ model Task {
   status      Status  @default(pending)
   User        User?   @relation(fields: [userId], references: [id])
   userId      String?
+
+  @@map("tasks")
 }
