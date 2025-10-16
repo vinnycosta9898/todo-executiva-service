@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { Prisma, Task, Status, User } from "../../../generated/prisma";
+import { Prisma, Task, Status } from "../../../generated/prisma";
 import { TasksRepository } from "../tasks-repository";
 
 export class InMemoryTasksRepository implements TasksRepository {
@@ -53,4 +53,22 @@ export class InMemoryTasksRepository implements TasksRepository {
   async findManyByUser(userId: string){
     return this.items.filter(item => item.userId === userId)
   }
+
+  async updateTask(status: Status, taskId: string) {
+    const taskIndex = this.items.findIndex(item => item.id === taskId);
+  
+    if (taskIndex === -1) {
+      return null;
+    }
+    
+    const updatedTask = {
+      ...this.items[taskIndex],
+      status
+    };
+  
+    this.items[taskIndex] = updatedTask;
+  
+    return updatedTask;
+  }
+  
 }
