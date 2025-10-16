@@ -1,62 +1,43 @@
-import type { UsersRepository } from '../../repositories/users-repository'
 
-import { compare } from 'bcryptjs'
-import { sign } from 'jsonwebtoken'
+import type { Request, Response } from 'express'
+import { z } from 'zod'
 
 import { CredentialsInvalidError } from '../../errors/credentials-invalid-error'
-import { PasswordLengthError } from '../../errors/password-length-error'
 import { ResourceNotFoundError } from '../../errors/resource-not-found-error'
+import { makeAuthenticate } from '../../factories/users/make-authenticate'
 
-interface AuthenticateRequest {
-  email: string
-  password: string
-}
 
-interface AuthenticateResponse {
-  id: string
-  name: string
-  token: string
-}
+export async function authenticate(req: Request, res: Response) {
+  const authenticateBodySchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(8).max(14)
+  })
 
-export class AuthenticateUseCase {
-  constructor(private usersRepository: UsersRepository) {}
+  const { email, password } = authenticateBodySchema.parse(req.body)
 
-  async execute({
-    email,
-    password
-  }: AuthenticateRequest): Promise<AuthenticateResponse> {
-    const user = await this.usersRepository.findByEmail(email)
+  try {
+    const authenticateUseCase = makeAuthenticate()
 
-    if (!user) {
-      throw new ResourceNotFoundError()
+    const response = await authenticateUseCase.execute({
+      email,
+      password
+    })
+
+    const user = {
+      id: response.id,
+      name: response.name,
+      token: response.token
     }
 
-    if (password.length < 8) {
-      throw new PasswordLengthError()
+    res.status(200).send(user)
+  } catch (err) {
+    if (err instanceof CredentialsInvalidError) {
+      res.status(401).send({ message: err.message })
     }
-
-    const doesPasswordMatch = await compare(password, user.password)
-
-    if (!doesPasswordMatch) {
-      throw new CredentialsInvalidError()
-    }
-
-    const token = sign(
-      {
-        name: user.name,
-        email: user.email
-      },
-      `${process.env.JWT_SECRET}`,
-      {
-        subject: user.id,
-        expiresIn: '1D'
-      }
-    )
-
-    return {
-      id: user.id,
-      name: user.name,
-      token
+    if (err instanceof ResourceNotFoundError) {
+      res.status(404).send({ message: err.message })
     }
   }
 }
+
+

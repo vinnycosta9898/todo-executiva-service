@@ -1,32 +1,22 @@
+
+import type { Request, Response } from 'express'
 import { ResourceNotFoundError } from '../../errors/resource-not-found-error'
-import type { UsersRepository } from '../../repositories/users-repository'
+import { makeUserGetProfile } from '../../factories/users/make-get-profile'
 
-interface GetListUserProfileRequest {
-  userId: string
-}
+export async function getUserProfile(req: Request, res: Response) {
+  const user_id = String(req.query.user_id)
 
-interface GetListUserProfileResponse {
-  id: string
-  name: string
-  email: string
-}
+  try {
+    const getUserProfileUseCase = makeUserGetProfile()
 
-export class GetUserProfileUseCase {
-  constructor(private usersRepository: UsersRepository) {}
+    const user = await getUserProfileUseCase.execute({
+      userId: user_id
+    })
 
-  async execute({
-    userId
-  }: GetListUserProfileRequest): Promise<GetListUserProfileResponse> {
-    const user = await this.usersRepository.findById(userId)
-
-    if (!user) {
-      throw new ResourceNotFoundError()
-    }
-
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
+    res.status(200).json(user)
+  } catch (err) {
+    if (err instanceof ResourceNotFoundError) {
+      res.status(404).send({ message: err.message })
     }
   }
 }
