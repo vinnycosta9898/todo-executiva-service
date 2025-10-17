@@ -71,7 +71,7 @@ export function TaskCard({
             <input
               type="checkbox"
               onChange={handleCheckboxChange}
-              className="w-5 h-5 accent-green-500"
+              className="w-5 h-5 bg-white/10 backdrop-blur-xl accent-green-500"
               disabled={loading}
             />
           )}

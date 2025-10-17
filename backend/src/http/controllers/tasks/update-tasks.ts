@@ -1,4 +1,3 @@
-import { Status } from '../../../../generated/prisma';
 import { Request, Response} from 'express'
 import z from "zod";
 import { TitleLengthError } from '../../../errors/title-length-error';
@@ -15,9 +14,11 @@ export async function updatedTask(req: Request, res:Response){
 
         const updateTaskUseCase = makeUpdateTask()
 
-        await updateTaskUseCase.execute({
+        const taskUpdated = await updateTaskUseCase.execute({
             taskId
         })
+
+        res.status(200).json({taskUpdated})
     }catch(err){
         if(err instanceof TitleLengthError){
             res.status(422).send({ message: err.message})

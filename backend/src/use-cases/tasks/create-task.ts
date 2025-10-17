@@ -1,4 +1,5 @@
 import { Task } from "../../../generated/prisma"
+import { DescriptionLengthError } from "../../errors/description-error-length"
 import { TaskWithSameTitleError } from "../../errors/task-with-same-title-error"
 import { TitleLengthError } from "../../errors/title-length-error"
 import { TasksRepository } from "../../repositories/tasks-repository"
@@ -26,6 +27,15 @@ export class CreateTaskUseCase{
         if(taskWithSameTitle){
             throw new TaskWithSameTitleError()
         }
+
+        if(description.length < 8 || title.length > 256){
+            throw new DescriptionLengthError()
+        }
+        
+        if(taskWithSameTitle){
+            throw new TaskWithSameTitleError()
+        }
+
 
 
         const task = await this.tasksRepository.create({

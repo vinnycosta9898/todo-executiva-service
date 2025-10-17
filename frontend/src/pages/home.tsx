@@ -1,39 +1,38 @@
 import { useEffect, useState } from 'react'
 import { TaskModal } from '../components/TaskModal'
+import { ProfileCard } from '../components/ProfileCard'
 import { api } from '../lib/apiClient'
 import { TaskCard } from '../components/Taskcard'
-import { ProfileCard } from '../components/ProfileCard'
 
 export function Home() {
   const userId = String(localStorage.getItem('@todo-service-user-id'))
 
-  const [opentaskModal, setOpenTaskModal] = useState(false)
-  const [showProfileCard, setShowProfileCard] = useState(false)
   const [tasks, setTasks] = useState<[]>([])
+  const [openTaskModal, setOpenTaskModal] = useState(false)
+  const [showProfileCard, setShowProfileCard] = useState(false)
+  const [loadingTasks, setLoadingTasks] = useState(false)
 
-  function handleOpenOrCloseTaskModal() {
-    setOpenTaskModal(!opentaskModal)
-  }
+  // Alterna modal de criar tarefa
+  const handleOpenOrCloseTaskModal = () => setOpenTaskModal(prev => !prev)
 
-  function toggleProfileCard() {
-    setShowProfileCard(!showProfileCard)
-  }
+  // Alterna dropdown do ProfileCard
+  const toggleProfileCard = () => setShowProfileCard(prev => !prev)
 
-  async function fetchTasksByUser() {
+  // Busca tarefas do usuário
+  const fetchTasksByUser = async () => {
+    setLoadingTasks(true)
     try {
       const response = await api.get(`/list-task-by-user/?user_id=${userId}`)
       setTasks(response.data.tasks)
     } catch (err) {
       console.error(err)
+    } finally {
+      setLoadingTasks(false)
     }
   }
 
-  // Home.tsx
-  useEffect(() => {
-    fetchTasksByUser()
-  }, [])
-
-  async function handleUpdateTask(taskId: string) {
+  // Atualiza status de tarefa
+  const handleUpdateTask = async (taskId: string) => {
     try {
       await api.put('/update-task-by-user', { taskId })
       await fetchTasksByUser()
@@ -42,7 +41,8 @@ export function Home() {
     }
   }
 
-  async function handleDeleteTask(taskId: string) {
+  // Deleta tarefa
+  const handleDeleteTask = async (taskId: string) => {
     try {
       await api.delete(`/delete-task?task_id=${taskId}`)
       await fetchTasksByUser()
@@ -51,52 +51,61 @@ export function Home() {
     }
   }
 
+  // Carrega tarefas ao montar componente
+  useEffect(() => {
+    fetchTasksByUser()
+  }, [])
+
   return (
-    <div className="w-screen h-screen bg-black relative">
-      {/* Modal de criar tarefa */}
-      {opentaskModal && (
-        <TaskModal openOrCloseModal={handleOpenOrCloseTaskModal} />
+    <div className="w-screen min-h-screen bg-black relative">
+      {/* Modal de criação de tarefa */}
+      {openTaskModal && (
+        <TaskModal
+          openOrCloseModal={handleOpenOrCloseTaskModal}
+          onTaskCreated={fetchTasksByUser} // Atualiza lista após criar tarefa
+        />
       )}
 
       {/* Cabeçalho */}
-      <div className="w-full h-12 px-48 pt-12 flex justify-between items-center relative">
+      <header className="w-full px-6 md:px-24 py-6 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
         <a href={`/home/${userId}`}>
-          <h1 className="font-bold text-white text-2xl">TODO-Service</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-white">
+            TODO-Service
+          </h1>
         </a>
 
-        {/* Botão Criar Tarefa + Avatar */}
         <div className="flex items-center gap-4 relative">
           <button
             type="button"
-            className="w-[20rem] h-12 rounded-md bg-white font-bold text-black cursor-pointer"
+            className="w-40 md:w-80 h-12 rounded-md bg-white text-black font-bold hover:bg-gray-200 transition"
             onClick={handleOpenOrCloseTaskModal}
           >
             Criar tarefa
           </button>
 
-          {/* Avatar simples para abrir ProfileCard */}
+          {/* Avatar para abrir ProfileCard */}
           {/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}
           {/** biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
           <div
             className="w-12 h-12 rounded-full bg-zinc-600 flex items-center justify-center text-white font-bold cursor-pointer hover:ring-2 hover:ring-white transition"
             onClick={toggleProfileCard}
           >
-            {localStorage
-              .getItem('@todo-service-user-id')
-              ?.charAt(0)
-              .toUpperCase() || 'U'}
+            {userId.charAt(0).toUpperCase()}
           </div>
 
-          {/* ProfileCard dropdown */}
           {showProfileCard && <ProfileCard />}
         </div>
-      </div>
+      </header>
 
       {/* Lista de tarefas */}
-      <main className="w-full h-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-48 mt-12">
-        {tasks.length === 0 ? (
-          <div className="col-span-full flex justify-center items-center h-64">
-            <span className="text-zinc-400 text-md text-center">
+      <main className="w-full px-6 md:px-24 mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {loadingTasks ? (
+          <div className="col-span-full flex justify-center items-center py-20">
+            <span className="text-white">Carregando tarefas...</span>
+          </div>
+        ) : tasks.length === 0 ? (
+          <div className="col-span-full flex justify-center items-center py-20">
+            <span className="text-zinc-400 text-center">
               Nenhuma tarefa encontrada <br />
               Clique em "Criar tarefa" para adicionar sua primeira tarefa!
             </span>
@@ -108,8 +117,8 @@ export function Home() {
               id={task.id}
               title={task.title}
               description={task.description}
-              status={task.status} // <-- aqui
-              createdAt={task.createdAt} // se tiver
+              status={task.status}
+              createdAt={task.createdAt || new Date().toISOString()}
               updateTask={handleUpdateTask}
               deleteTask={handleDeleteTask}
             />

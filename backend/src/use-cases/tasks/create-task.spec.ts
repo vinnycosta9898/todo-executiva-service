@@ -3,6 +3,7 @@ import { InMemoryTasksRepository } from "../../repositories/in-memmory/in-memmor
 import { CreateTaskUseCase } from "./create-task";
 import { TaskWithSameTitleError } from "../../errors/task-with-same-title-error";
 import { TitleLengthError } from "../../errors/title-length-error";
+import { DescriptionLengthError } from "../../errors/description-error-length";
 
 let tasksRepository: InMemoryTasksRepository
 let sut: CreateTaskUseCase
@@ -33,6 +34,18 @@ describe("Create task test", () => {
           ).rejects.toBeInstanceOf(TitleLengthError)
 
     })
+
+    it("should no be able to create a task with description less 8 caractheres or more thans 256 caractheres", async () => {
+        await expect(() =>
+            sut.execute({
+                title: "Estudar SOLID",
+                description: "O",
+                userId: "user-id"
+            })
+          ).rejects.toBeInstanceOf(DescriptionLengthError)
+
+    })
+
 
     it("should no be able to create a task with same title", async () => {
         await tasksRepository.create({
