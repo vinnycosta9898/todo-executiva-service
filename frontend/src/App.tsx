@@ -1,12 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
+import { AuthContext } from './context/auth-context'
 
 const signUpBodySchema = z.object({
-  name: z.string(),
-  email: z.email(),
+  name: z.string({ message: 'Insira um nome valido' }),
+  email: z.email({ message: 'Insira um email valido' }),
   password: z
-    .string()
+    .string({ message: 'Senha invalida' })
     .min(8, { message: 'A senha deve conter no minimo 8 caractheres' })
     .max(16, { message: 'A senha deve conter no maximo 16 caracthres' }),
   passwordConfirmation: z
@@ -20,10 +22,17 @@ type SignUpData = z.infer<typeof signUpBodySchema>
 function App() {
   const {
     register,
+    handleSubmit,
     formState: { errors }
   } = useForm<SignUpData>({
     resolver: zodResolver(signUpBodySchema)
   })
+
+  const { signUp } = useContext(AuthContext)
+
+  async function handleSignUp(data: SignUpData) {
+    await signUp(data)
+  }
 
   return (
     <div className="w-screen h-screen bg-black flex ">
@@ -33,7 +42,10 @@ function App() {
         </h1>
       </div>
 
-      <form className="w-auto flex flex-col justify-center items-center gap-8">
+      <form
+        className="w-[60%] flex flex-col justify-center items-center gap-8"
+        onSubmit={handleSubmit(handleSignUp)}
+      >
         <div className="flex flex-col">
           <label htmlFor="" className="font-bold text-white">
             Nome
@@ -78,7 +90,7 @@ function App() {
           />
           {errors.password && (
             <span className="text-red-400 text-center">
-              {errors.email?.message}
+              {errors.password?.message}
             </span>
           )}
         </div>
@@ -94,18 +106,17 @@ function App() {
           />
           {errors.passwordConfirmation && (
             <span className="text-red-400 text-center">
-              {errors.email?.message}
+              {errors.passwordConfirmation?.message}
             </span>
           )}
         </div>
         <button
           type="submit"
-          className="w-[30rem] h-12 bg-white rounded-md outline-none font-bold text-black"
+          className="w-[30rem] h-12 bg-white rounded-md outline-none font-bold text-black cursor-pointer"
         >
           Cadastre-se Ja
         </button>
-        {/** biome-ignore lint/a11y/useValidAnchor: <explanation> */}
-        <a href="#">Nao possui um conta? clique aqui</a>
+        <a href="/signin">Nao possui um conta? clique aqui</a>
       </form>
     </div>
   )

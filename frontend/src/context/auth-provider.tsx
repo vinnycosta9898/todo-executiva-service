@@ -90,8 +90,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         api.defaults.headers.Authorization = `Bearer ${token}`
 
-        localStorage.setItem('@feedback-pro-user-id', id)
-        localStorage.setItem('@feedback-pro-user-email', email)
+        localStorage.setItem('@todo-service-user-id', id)
+        localStorage.setItem('@todo-service-user-email', email)
 
         setUser({ id, name: response.data.name, email })
 
