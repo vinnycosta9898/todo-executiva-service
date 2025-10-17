@@ -20,7 +20,6 @@ type SignUpData = z.infer<typeof signUpBodySchema>
 function App() {
   const {
     register,
-    handleSubmit,
     formState: { errors }
   } = useForm<SignUpData>({
     resolver: zodResolver(signUpBodySchema)
