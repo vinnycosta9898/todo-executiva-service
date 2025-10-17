@@ -55,6 +55,23 @@ git clone https://github.com/vinnycosta9898/todo-executiva-service.git
 pnpm install
 ```
 
+Crie um aquivo .env na raiz do projeto e adicione o endereco de conexao 
+com o banco sqLite
+```
+DATABASE_URL="file:./dev.db"
+```
+
+Apos isso adione tambem uma JWT secret para o sistema de autenticacao
+```
+JWT_SECRET=example_key
+```
+
+Rode as alteracoes no prisma
+```
+npx prisma migrate dev
+```
+
+
 <h5>Start server</h5>
 
 ```
@@ -74,13 +91,12 @@ pnpm install
 
 
 ```bash
-git clone https://github.com/Fernanda-Kipper/video-chat.git
-git checkout -b feature/NAME
+git clone https://github.com/vinnycosta9898/todo-service-executiva.git 
 ```
 
 
 
 <h2 id="license">License 📃 </h2>
 
-This project is under [MIT](LICENSE) license
+
 
