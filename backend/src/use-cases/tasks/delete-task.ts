@@ -1,6 +1,5 @@
 import { Task } from "../../../generated/prisma"
 import { ResourceNotFoundError } from "../../errors/resource-not-found-error"
-import { TaskListEmpytError } from "../../errors/tasks-list-empyt-error"
 import { TasksRepository } from "../../repositories/tasks-repository"
 
 interface DeleteTaskUseCaseRequest{

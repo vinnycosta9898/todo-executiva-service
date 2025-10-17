@@ -5,7 +5,7 @@ import { TitleLengthError } from '../../../errors/title-length-error';
 import { TaskWithSameTitleError } from '../../../errors/task-with-same-title-error';
 import { makeUpdateTask } from '../../../factories/tasks/make-update-task';
 
-export async function createTask(req: Request, res:Response){
+export async function updatedTask(req: Request, res:Response){
     const createTaskBodySchema = z.object({
         taskId: z.string(),
         status: Status

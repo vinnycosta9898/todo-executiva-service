@@ -21,6 +21,8 @@ export async function createTask(req: Request, res:Response){
             description,
             userId
         })
+
+        res.status(201)
     }catch(err){
         if(err instanceof TitleLengthError){
             res.status(422).send({ message: err.message})

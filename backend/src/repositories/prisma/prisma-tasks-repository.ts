@@ -56,7 +56,7 @@ export class PrismaTasksRepository implements TasksRepository{
         const tasks = await prisma.task.findMany({
             where:{
                 userId
-            }
+            },
         })
 
         if(!tasks){

@@ -1,22 +1,23 @@
-import { Request, Response} from 'express'
-import { makeListTask } from '../../../factories/tasks/make-list-tasks';
-import { TaskListEmpytError } from '../../../errors/tasks-list-empyt-error';
+import { Request, Response } from "express";
+import { makeListTask } from "../../../factories/tasks/make-list-tasks";
+import { TaskListEmpytError } from "../../../errors/tasks-list-empyt-error";
 
-export async function listTasksByUser(req: Request, res:Response){
-    const userId = String(req.params.taskId)
-    
-    try{
-        const lisTasksUseCase = makeListTask()
+export async function listTasksByUser(req: Request, res: Response) {
+  const userId = req.params.user_id as string;
+  
+  console.log(userId)
 
-        await lisTasksUseCase.execute({
-            userId
-        })
+  try {
+    const listTasksUseCase = makeListTask();
 
-    }catch(err){
-        if(err instanceof TaskListEmpytError){
-            res.status(200).send({ message: err.message})
-        }
+    const { tasks } = await listTasksUseCase.execute({ userId });
 
-        res.status(500).send({message: err})
+    return res.status(200).json({ tasks });
+  } catch (err) {
+    if (err instanceof TaskListEmpytError) {
+      return res.status(200).json({ message: err.message, tasks: [] });
     }
+
+    return res.status(500).json({ message: "Internal server error", error: String(err) });
+  }
 }
