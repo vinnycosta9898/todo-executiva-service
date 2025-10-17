@@ -2,36 +2,31 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
-import { AuthContext } from './context/auth-context'
+import { AuthContext } from '../context/auth-context'
 
 const signUpBodySchema = z.object({
-  name: z.string({ message: 'Insira um nome valido' }),
   email: z.email({ message: 'Insira um email valido' }),
   password: z
     .string({ message: 'Senha invalida' })
     .min(8, { message: 'A senha deve conter no minimo 8 caractheres' })
-    .max(16, { message: 'A senha deve conter no maximo 16 caracthres' }),
-  passwordConfirmation: z
-    .string()
-    .min(8, { message: 'A senha deve conter no minimo 8 caractheres' })
     .max(16, { message: 'A senha deve conter no maximo 16 caracthres' })
 })
 
-type SignUpData = z.infer<typeof signUpBodySchema>
+type SignInData = z.infer<typeof signUpBodySchema>
 
-function App() {
+export function SignIn() {
   const {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<SignUpData>({
+  } = useForm<SignInData>({
     resolver: zodResolver(signUpBodySchema)
   })
 
-  const { signUp } = useContext(AuthContext)
+  const { signIn } = useContext(AuthContext)
 
-  async function handleSignUp(data: SignUpData) {
-    await signUp(data)
+  async function handleSignUp(data: SignInData) {
+    await signIn(data)
   }
 
   return (
@@ -46,22 +41,6 @@ function App() {
         className="w-[60%] flex flex-col justify-center items-center gap-8"
         onSubmit={handleSubmit(handleSignUp)}
       >
-        <div className="flex flex-col">
-          <label htmlFor="" className="font-bold text-white">
-            Nome
-          </label>
-          <input
-            type="text"
-            className="w-[30rem] h-12 bg-white/10 backdrop-blur-xl rounded-md outline-none px-2 text-zinc-400"
-            placeholder="Digite o seu nome"
-            {...register('name')}
-          />
-          {errors.name && (
-            <span className="text-red-400 text-center">
-              {errors.name?.message}
-            </span>
-          )}
-        </div>
         <div className="flex flex-col">
           <label htmlFor="" className="font-bold text-white">
             email
@@ -83,7 +62,7 @@ function App() {
             Senha
           </label>
           <input
-            type="password"
+            type="text"
             className="w-[30rem] h-12 bg-white/10 backdrop-blur-xl rounded-md outline-none px-2 text-zinc-400"
             placeholder="Digite a sua senha"
             {...register('password')}
@@ -94,34 +73,17 @@ function App() {
             </span>
           )}
         </div>
-        <div className="flex flex-col">
-          <label htmlFor="" className="font-bold text-white">
-            Confirme a sua ssenha
-          </label>
-          <input
-            type="password"
-            className="w-[30rem] h-12 bg-white/10 backdrop-blur-xl rounded-md outline-none px-2 text-zinc-400"
-            placeholder="Confirme a sua senha"
-            {...register('passwordConfirmation')}
-          />
-          {errors.passwordConfirmation && (
-            <span className="text-red-400 text-center">
-              {errors.passwordConfirmation?.message}
-            </span>
-          )}
-        </div>
+
         <button
           type="submit"
           className="w-[30rem] h-12 bg-white rounded-md outline-none font-bold text-black cursor-pointer"
         >
-          Cadastre-se Ja
+          Entrar
         </button>
-        <a href="/signin" className="text-zinc-400">
-          Ja possui um conta? clique aqui
+        <a href="/" className="text-zinc-400">
+          Nao possui um conta? clique aqui
         </a>
       </form>
     </div>
   )
 }
-
-export default App

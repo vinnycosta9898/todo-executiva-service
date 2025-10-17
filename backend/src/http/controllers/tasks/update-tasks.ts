@@ -16,7 +16,6 @@ export async function updatedTask(req: Request, res:Response){
         const updateTaskUseCase = makeUpdateTask()
 
         await updateTaskUseCase.execute({
-            status: Status.in_progress,
             taskId
         })
     }catch(err){

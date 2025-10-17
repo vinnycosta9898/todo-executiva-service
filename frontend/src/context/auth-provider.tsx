@@ -56,7 +56,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         setUser({ id, name, email })
 
-        navigate(`/dashboard/${id}`)
+        navigate(`/home/${id}`)
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -96,6 +96,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser({ id, name: response.data.name, email })
 
         toast.success('Usuário registrado com sucesso')
+
+        navigate('/signin')
       }
     } catch {
       toast.error('Erro ao cadastrar usuário')
@@ -105,7 +107,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const cookies = parseCookies()
     const token = cookies['@todo-service']
-    const userId = String(localStorage.getItem('@todo-service'))
+    const userId = String(localStorage.getItem('@todo-service-user-id'))
 
     if (token && userId) {
       api
