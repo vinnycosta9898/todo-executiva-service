@@ -16,13 +16,13 @@ export async function createTask(req: Request, res:Response){
 
         const createTaskUseCase = makeCreateTask()
 
-        await createTaskUseCase.execute({
+        const task = await createTaskUseCase.execute({
             title,
             description,
             userId
         })
 
-        res.status(201)
+        res.status(201).json({task})
     }catch(err){
         if(err instanceof TitleLengthError){
             res.status(422).send({ message: err.message})

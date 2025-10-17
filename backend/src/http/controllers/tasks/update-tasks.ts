@@ -8,11 +8,10 @@ import { makeUpdateTask } from '../../../factories/tasks/make-update-task';
 export async function updatedTask(req: Request, res:Response){
     const createTaskBodySchema = z.object({
         taskId: z.string(),
-        status: Status
     })
 
     try{
-        const { taskId, status } = createTaskBodySchema.parse(req.body)
+        const { taskId } = createTaskBodySchema.parse(req.body)
 
         const updateTaskUseCase = makeUpdateTask()
 
