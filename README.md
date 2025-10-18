@@ -91,7 +91,7 @@ npx prisma migrate dev
 
 
 ```bash
-git clone https://github.com/vinnycosta9898/todo-service-executiva.git 
+git clone https://github.com/vinnycosta9898/todo-executiva-service.git 
 ```
 
 
